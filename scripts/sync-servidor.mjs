@@ -15,7 +15,7 @@ export function generated() {
   return {
     'datetime.ts': HEADER + read('src/lib/datetime.ts'),
     'sample.ts': HEADER + read('src/data/sample.ts').replace("from '../lib/datetime';", "from './datetime.ts';"),
-    'locais.ts': HEADER + `export const LOCAIS = ${JSON.stringify(geojson, null, 2)} as const;\n`,
+    'locais.ts': HEADER + `export const LOCAIS = ${JSON.stringify(geojson)} as const;\n`,
   };
 }
 
