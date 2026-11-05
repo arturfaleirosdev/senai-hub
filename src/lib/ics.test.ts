@@ -24,7 +24,7 @@ describe('exportação .ics', () => {
     expect(ics.startsWith('BEGIN:VCALENDAR\r\n')).toBe(true);
     expect(ics).toContain('DTSTART:20261106T110000Z');
     expect(ics).toContain('DTEND:20261106T130000Z');
-    expect(ics).toContain('UID:evt-1@smartcampus-senai-taguatinga');
+    expect(ics).toContain('UID:evt-1@senai-hub-taguatinga');
     expect(ics).toContain('TRIGGER:-PT1H');
     expect(ics.trimEnd().endsWith('END:VCALENDAR')).toBe(true);
   });

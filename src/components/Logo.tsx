@@ -2,7 +2,7 @@ interface LogoProps {
   className?: string;
 }
 
-/** Monograma próprio do SmartCampus (não é o logo oficial do SENAI). */
+/** Monograma próprio do SENAI Hub (não é o logo oficial do SENAI). */
 export function LogoMark({ className = 'h-9 w-9' }: LogoProps) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true" focusable="false">
@@ -18,14 +18,14 @@ export function LogoMark({ className = 'h-9 w-9' }: LogoProps) {
 
 export function Logo() {
   return (
-    <a href="#inicio" className="flex items-center gap-2.5 rounded-lg" aria-label="SmartCampus SENAI Taguatinga, início">
+    <a href="#inicio" className="flex items-center gap-2.5 rounded-lg" aria-label="SENAI Hub Taguatinga, início">
       <LogoMark />
       <span className="leading-tight">
         <span className="block font-display text-[15px] font-extrabold tracking-tight text-brand-900">
-          SmartCampus
+          SENAI <span className="text-accent-600">Hub</span>
         </span>
         <span className="block whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.08em] text-accent-600 sm:text-[11px] sm:tracking-[0.14em]">
-          SENAI Taguatinga
+          Taguatinga
         </span>
       </span>
     </a>

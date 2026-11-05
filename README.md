@@ -1,4 +1,4 @@
-# SmartCampus SENAI Taguatinga
+# SENAI Hub Taguatinga
 
 Portal do aluno do SENAI Taguatinga (Brasília-DF). Esta primeira etapa é a **landing page / dashboard**,
 um site 100% estático publicado no **GitHub Pages**, sem login e sem back-end.
@@ -27,7 +27,7 @@ página abre**, então a demonstração nunca fica com eventos vencidos.
 ## Tecnologias
 
 React 19 + Vite + TypeScript + Tailwind CSS 4, ícones `lucide-react` e fontes Inter e Plus Jakarta Sans
-(empacotadas, sem chamadas externas). Testes com Vitest.
+(licença OFL, em `src/assets/fonts`, sem chamadas externas). Testes com Vitest.
 
 ## Rodar localmente
 
@@ -39,7 +39,11 @@ npm run dev        # http://localhost:5173
 npm test           # testes de fuso horário e .ics
 npm run build      # gera a pasta dist/
 npm run preview    # serve o build em http://localhost:4173
+npm run build:arquivo  # gera dist-arquivo/index.html: arquivo único que abre com dois cliques
 ```
+
+> Dar dois cliques no `index.html` da raiz **não funciona**: ele é o código-fonte e precisa do Vite.
+> Para abrir sem instalar nada, use o arquivo gerado por `npm run build:arquivo`.
 
 ## Publicar no GitHub Pages
 
@@ -47,14 +51,11 @@ O repositório já traz o workflow `.github/workflows/deploy.yml`, que testa, ge
 cada push na branch `main`. O `vite.config.ts` usa `base: './'`, então funciona com qualquer nome de
 repositório.
 
-1. Crie um repositório no GitHub (por exemplo `smartcampus-senai-taguatinga`) e envie o código:
-   ```bash
-   git remote add origin https://github.com/SEU-USUARIO/smartcampus-senai-taguatinga.git
-   git push -u origin main
-   ```
+1. Envie o código para a branch `main` do repositório
+   [alexandrebezerracs/Smart-Campus](https://github.com/alexandrebezerracs/Smart-Campus).
 2. No GitHub, abra **Settings → Pages** e, em **Build and deployment → Source**, escolha **GitHub Actions**.
 3. Acompanhe a aba **Actions**. Ao terminar, o site fica em
-   `https://SEU-USUARIO.github.io/smartcampus-senai-taguatinga/`.
+   `https://alexandrebezerracs.github.io/Smart-Campus/`.
 
 Para publicar de novo, basta fazer push na `main` (ou rodar o workflow manualmente em **Actions**).
 

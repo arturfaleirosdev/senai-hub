@@ -7,7 +7,7 @@ export function Footer() {
         <div className="flex items-center gap-3">
           <LogoMark className="h-8 w-8" />
           <div>
-            <p className="font-semibold text-brand-950">SmartCampus SENAI Taguatinga</p>
+            <p className="font-semibold text-brand-950">SENAI Hub Taguatinga</p>
             <p className="text-xs">Portal do aluno · Brasília-DF · horários de Brasília</p>
           </div>
         </div>

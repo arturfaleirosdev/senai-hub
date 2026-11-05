@@ -51,11 +51,11 @@ export function buildIcs(event: IcsEvent, now: Date = new Date()): string {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//SmartCampus SENAI Taguatinga//PT-BR',
+    'PRODID:-//SENAI Hub Taguatinga//PT-BR',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
-    `UID:${event.id}@smartcampus-senai-taguatinga`,
+    `UID:${event.id}@senai-hub-taguatinga`,
     `DTSTAMP:${toIcsDate(now)}`,
     `DTSTART:${toIcsDate(event.start)}`,
     `DTEND:${toIcsDate(event.end)}`,

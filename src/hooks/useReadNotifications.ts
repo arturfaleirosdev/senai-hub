@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { CampusNotification } from '../data/sample';
 
-const STORAGE_KEY = 'smartcampus:notificacoes-lidas';
+const STORAGE_KEY = 'senai-hub:notificacoes-lidas';
 
 function loadStored(): Record<string, boolean> | null {
   try {
