@@ -6,7 +6,7 @@ interface LogoProps {
 
 /** Logo do SENAI Hub (arquivo em src/assets/logo-senai-hub.png). */
 export function LogoMark({ className = 'h-10 w-10' }: LogoProps) {
-  return <img src={logoUrl} alt="" aria-hidden="true" className={`${className} object-contain`} width={160} height={160} />;
+  return <img src={logoUrl} alt="" aria-hidden="true" className={`${className} object-contain`} width={112} height={112} />;
 }
 
 export function Logo() {

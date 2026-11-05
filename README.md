@@ -34,7 +34,7 @@ página abre**, então a demonstração nunca fica com eventos vencidos.
 ## Tecnologias
 
 React 19 + Vite + TypeScript + Tailwind CSS 4, ícones `lucide-react` e fontes Inter e Plus Jakarta Sans
-(licença OFL, em `src/assets/fonts`, sem chamadas externas). Testes com Vitest.
+(Google Fonts). Testes com Vitest.
 
 ## Rodar localmente
 
