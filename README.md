@@ -51,11 +51,10 @@ O repositório já traz o workflow `.github/workflows/deploy.yml`, que testa, ge
 cada push na branch `main`. O `vite.config.ts` usa `base: './'`, então funciona com qualquer nome de
 repositório.
 
-1. Envie o código para a branch `main` do repositório
-   [alexandrebezerracs/Smart-Campus](https://github.com/alexandrebezerracs/Smart-Campus).
+1. Crie um repositório no GitHub (público, para o Pages grátis) e envie o código para a branch `main`.
 2. No GitHub, abra **Settings → Pages** e, em **Build and deployment → Source**, escolha **GitHub Actions**.
 3. Acompanhe a aba **Actions**. Ao terminar, o site fica em
-   `https://alexandrebezerracs.github.io/Smart-Campus/`.
+   `https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/`.
 
 Para publicar de novo, basta fazer push na `main` (ou rodar o workflow manualmente em **Actions**).
 
