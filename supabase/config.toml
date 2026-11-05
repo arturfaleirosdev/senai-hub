@@ -1,0 +1,7 @@
+# Configuração usada pelo Supabase CLI (supabase functions deploy).
+project_id = "senai-hub"
+
+[functions.assistente]
+# A função é pública (o site não tem login); a proteção é feita dentro dela:
+# limite por aparelho/dia, limite global/dia, tamanho máximo e CORS.
+verify_jwt = false

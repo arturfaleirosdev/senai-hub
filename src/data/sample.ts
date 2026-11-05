@@ -19,6 +19,8 @@ export interface CampusEvent {
   end: Date;
   category: EventCategory;
   location: string;
+  /** Id do local em campus-locais.geojson (sem id = evento online). */
+  placeId?: string;
   audience: string;
 }
 
@@ -72,7 +74,8 @@ export function buildEvents(now: Date): CampusEvent[] {
       start: palestraStart,
       end: new Date(palestraStart.getTime() + 90 * MIN),
       category: 'palestra',
-      location: 'Auditório principal',
+      location: 'Auditório',
+      placeId: 'auditorio',
       audience: 'Todos os cursos',
     },
     {
@@ -82,7 +85,8 @@ export function buildEvents(now: Date): CampusEvent[] {
       start: atDayOffset(now, 1, 8, 0),
       end: atDayOffset(now, 1, 10, 0),
       category: 'prova',
-      location: 'Bloco B · Sala 12',
+      location: 'Blocos E e F · Sala 12',
+      placeId: 'bloco-ef',
       audience: 'Técnico em Eletrotécnica · Turma ELT-2A',
     },
     {
@@ -93,6 +97,7 @@ export function buildEvents(now: Date): CampusEvent[] {
       end: atDayOffset(now, 1, 16, 0),
       category: 'palestra',
       location: 'Biblioteca · Sala multiuso',
+      placeId: 'biblioteca',
       audience: 'Todos os cursos',
     },
     {
@@ -112,7 +117,8 @@ export function buildEvents(now: Date): CampusEvent[] {
       start: atDayOffset(now, 3, 19, 0),
       end: atDayOffset(now, 3, 22, 0),
       category: 'aula',
-      location: 'Laboratório de Automação',
+      location: 'Blocos E e F · Laboratório de Automação',
+      placeId: 'bloco-ef',
       audience: 'Técnico em Mecatrônica · Turma MEC-3N',
     },
     {
@@ -123,6 +129,7 @@ export function buildEvents(now: Date): CampusEvent[] {
       end: atDayOffset(now, 5, 17, 0),
       category: 'feira',
       location: 'Pátio central',
+      placeId: 'patio',
       audience: 'Aberto à comunidade',
     },
     {
@@ -132,7 +139,8 @@ export function buildEvents(now: Date): CampusEvent[] {
       start: atDayOffset(now, 7, 9, 0),
       end: atDayOffset(now, 7, 18, 0),
       category: 'evento',
-      location: 'Bloco C · Laboratórios de Informática',
+      location: 'Blocos E e F · Laboratórios de TI',
+      placeId: 'bloco-ef',
       audience: 'Todos os cursos',
     },
     {
@@ -142,7 +150,8 @@ export function buildEvents(now: Date): CampusEvent[] {
       start: atDayOffset(now, 9, 8, 0),
       end: atDayOffset(now, 9, 20, 0),
       category: 'prazo',
-      location: 'Secretaria acadêmica',
+      location: 'Bloco A · Secretaria',
+      placeId: 'secretaria',
       audience: 'Todos os cursos',
     },
   ];
@@ -187,7 +196,7 @@ export function buildNotifications(now: Date): CampusNotification[] {
       id: 'ntf-5',
       category: 'avisos',
       title: 'Manutenção no Wi-Fi do Bloco C',
-      body: 'A rede ficará instável entre 7h e 9h. Os laboratórios usam rede cabeada.',
+      body: 'A rede ficará instável entre 7h e 9h. Os laboratórios de TI dos Blocos E e F usam rede cabeada.',
       createdAt: ago(2 * 24 * 60),
       initiallyRead: true,
     },

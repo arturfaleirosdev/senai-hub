@@ -47,3 +47,19 @@ export const JOB_MODALITIES: Record<JobModality, string> = {
   hibrido: 'Híbrido',
   remoto: 'Remoto',
 };
+
+export const PLACE_CATEGORIES: Record<
+  'entrada' | 'estacionamento' | 'servicos' | 'convivencia' | 'alimentacao' | 'academico' | 'laboratorio' | 'oficina' | 'banheiro' | 'acessibilidade',
+  { label: string; color: string }
+> = {
+  academico: { label: 'Blocos e salas', color: '#004a8d' },
+  laboratorio: { label: 'Laboratórios', color: '#7c3aed' },
+  oficina: { label: 'Oficinas', color: '#b45309' },
+  servicos: { label: 'Secretaria e biblioteca', color: '#0e7490' },
+  convivencia: { label: 'Auditório e pátio', color: '#be185d' },
+  alimentacao: { label: 'Cantina', color: '#ca8a04' },
+  entrada: { label: 'Entradas', color: '#d40c18' },
+  estacionamento: { label: 'Estacionamento', color: '#475569' },
+  banheiro: { label: 'Banheiros', color: '#0891b2' },
+  acessibilidade: { label: 'Acessibilidade', color: '#15803d' },
+};

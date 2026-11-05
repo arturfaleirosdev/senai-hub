@@ -8,6 +8,7 @@ const NAV = [
   { href: '#eventos', label: 'Próximos eventos' },
   { href: '#notificacoes', label: 'Notificações' },
   { href: '#vagas', label: 'Vagas' },
+  { href: '#mapa', label: 'Mapa' },
 ];
 
 const WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];

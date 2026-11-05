@@ -6,17 +6,21 @@ interface Service {
   metric: string;
   icon: LucideIcon;
   tone: string;
-  /** Âncora na própria página; sem href = módulo ainda em construção. */
+  /** Âncora na própria página. */
   href?: string;
+  /** Ação no clique (quando não é uma âncora). */
+  onClick?: () => void;
 }
 
 interface QuickAccessProps {
   eventsThisWeek: number;
   unreadCount: number;
   openJobs: number;
+  placesCount: number;
+  onOpenAssistant: () => void;
 }
 
-export function QuickAccess({ eventsThisWeek, unreadCount, openJobs }: QuickAccessProps) {
+export function QuickAccess({ eventsThisWeek, unreadCount, openJobs, placesCount, onOpenAssistant }: QuickAccessProps) {
   const services: Service[] = [
     {
       title: 'Meu Calendário',
@@ -45,16 +49,18 @@ export function QuickAccess({ eventsThisWeek, unreadCount, openJobs }: QuickAcce
     {
       title: 'Mapa do campus',
       description: 'Blocos, laboratórios, secretaria e acessibilidade.',
-      metric: 'Mapa interativo',
+      metric: `${placesCount} locais no mapa`,
       icon: Map,
       tone: 'bg-sky-600 text-white',
+      href: '#mapa',
     },
     {
       title: 'Assistente IA',
       description: 'Pergunte sobre agenda, vagas e locais do campus.',
-      metric: 'Tire dúvidas rápidas',
+      metric: 'Abrir o chat',
       icon: Bot,
       tone: 'bg-violet-600 text-white',
+      onClick: onOpenAssistant,
     },
   ];
 
@@ -72,7 +78,7 @@ export function QuickAccess({ eventsThisWeek, unreadCount, openJobs }: QuickAcce
                 <span className={`grid h-10 w-10 place-items-center rounded-xl ${service.tone}`}>
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </span>
-                {service.href ? (
+                {service.href || service.onClick ? (
                   <ArrowRight
                     className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-brand-600"
                     aria-hidden="true"
@@ -96,6 +102,14 @@ export function QuickAccess({ eventsThisWeek, unreadCount, openJobs }: QuickAcce
                 <a href={service.href} className={`${base} transition hover:-translate-y-0.5 hover:shadow-md hover:ring-brand-200`}>
                   {body}
                 </a>
+              ) : service.onClick ? (
+                <button
+                  type="button"
+                  onClick={service.onClick}
+                  className={`${base} w-full text-left transition hover:-translate-y-0.5 hover:shadow-md hover:ring-brand-200`}
+                >
+                  {body}
+                </button>
               ) : (
                 <div className={base} aria-label={`${service.title}: em breve`}>
                   {body}

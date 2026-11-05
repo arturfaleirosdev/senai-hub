@@ -9,9 +9,10 @@ import { SectionHeader } from './SectionHeader';
 interface UpcomingEventsProps {
   events: CampusEvent[];
   limit?: number;
+  onShowOnMap: (placeId: string) => void;
 }
 
-export function UpcomingEvents({ events, limit = 6 }: UpcomingEventsProps) {
+export function UpcomingEvents({ events, limit = 6, onShowOnMap }: UpcomingEventsProps) {
   const now = useNow(30_000);
   const upcoming = events.filter((e) => e.end.getTime() > now.getTime()).slice(0, limit);
 
@@ -65,10 +66,22 @@ export function UpcomingEvents({ events, limit = 6 }: UpcomingEventsProps) {
                         </div>
                         <p className="mt-1 font-semibold leading-snug text-brand-950">{event.title}</p>
                         <div className="mt-1.5 flex flex-col gap-1 text-xs text-slate-500 sm:flex-row sm:gap-4">
-                          <span className="flex items-center gap-1.5">
-                            <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                            {event.location}
-                          </span>
+                          {event.placeId ? (
+                            <button
+                              type="button"
+                              onClick={() => onShowOnMap(event.placeId!)}
+                              className="-mx-1 flex items-center gap-1.5 rounded px-1 text-left font-semibold text-brand-700 underline decoration-brand-200 underline-offset-2 hover:decoration-brand-600"
+                              aria-label={`${event.location}: ver no mapa`}
+                            >
+                              <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                              {event.location}
+                            </button>
+                          ) : (
+                            <span className="flex items-center gap-1.5">
+                              <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                              {event.location}
+                            </span>
+                          )}
                           <span className="flex items-center gap-1.5">
                             <Users className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                             {event.audience}

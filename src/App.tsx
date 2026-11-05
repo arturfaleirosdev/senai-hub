@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { Assistant } from './components/Assistant';
 import { BottomNav } from './components/BottomNav';
+import { CampusMap, type MapFocus } from './components/CampusMap';
 import { FeaturedJobs } from './components/FeaturedJobs';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
@@ -7,6 +9,7 @@ import { Hero } from './components/Hero';
 import { LatestNotifications } from './components/LatestNotifications';
 import { QuickAccess } from './components/QuickAccess';
 import { UpcomingEvents } from './components/UpcomingEvents';
+import { PLACES } from './data/places';
 import { buildEvents, buildJobs, buildNotifications } from './data/sample';
 import { useReadNotifications } from './hooks/useReadNotifications';
 
@@ -22,6 +25,10 @@ export default function App() {
   const notifications = useMemo(() => buildNotifications(openedAt), [openedAt]);
   const jobs = useMemo(() => buildJobs(openedAt), [openedAt]);
   const read = useReadNotifications(notifications);
+  const [mapFocus, setMapFocus] = useState<MapFocus | null>(null);
+  const [assistantOpen, setAssistantOpen] = useState(false);
+
+  const showOnMap = useCallback((placeId: string) => setMapFocus({ placeId, nonce: Date.now() }), []);
 
   const eventsThisWeek = events.filter(
     (e) => e.end.getTime() > openedAt.getTime() && e.start.getTime() < openedAt.getTime() + WEEK,
@@ -38,11 +45,17 @@ export default function App() {
       </a>
       <Header unreadCount={read.unreadCount} />
       <main id="conteudo">
-        <Hero events={events} />
+        <Hero events={events} onShowOnMap={showOnMap} />
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <QuickAccess eventsThisWeek={eventsThisWeek} unreadCount={read.unreadCount} openJobs={openJobs} />
+          <QuickAccess
+            eventsThisWeek={eventsThisWeek}
+            unreadCount={read.unreadCount}
+            openJobs={openJobs}
+            placesCount={PLACES.length}
+            onOpenAssistant={() => setAssistantOpen(true)}
+          />
           <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-8">
-            <UpcomingEvents events={events} />
+            <UpcomingEvents events={events} onShowOnMap={showOnMap} />
             <LatestNotifications
               notifications={notifications}
               isRead={read.isRead}
@@ -54,10 +67,14 @@ export default function App() {
           <div className="mt-10">
             <FeaturedJobs jobs={jobs} />
           </div>
+          <div className="mt-10">
+            <CampusMap events={events} focus={mapFocus} />
+          </div>
         </div>
       </main>
       <Footer />
       <BottomNav unreadCount={read.unreadCount} />
+      <Assistant open={assistantOpen} onOpenChange={setAssistantOpen} openedAt={openedAt} />
     </>
   );
 }

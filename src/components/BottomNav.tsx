@@ -1,4 +1,4 @@
-import { Bell, Briefcase, CalendarDays, Home } from 'lucide-react';
+import { Bell, Briefcase, CalendarDays, Home, Map } from 'lucide-react';
 
 interface BottomNavProps {
   unreadCount: number;
@@ -11,13 +11,14 @@ export function BottomNav({ unreadCount }: BottomNavProps) {
     { href: '#eventos', label: 'Agenda', icon: CalendarDays },
     { href: '#notificacoes', label: 'Avisos', icon: Bell, badge: unreadCount },
     { href: '#vagas', label: 'Vagas', icon: Briefcase },
+    { href: '#mapa', label: 'Mapa', icon: Map },
   ];
   return (
     <nav
       aria-label="Navegação rápida"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
     >
-      <ul className="mx-auto grid max-w-md grid-cols-4">
+      <ul className="mx-auto grid max-w-md grid-cols-5">
         {items.map(({ href, label, icon: Icon, badge }) => (
           <li key={href}>
             <a

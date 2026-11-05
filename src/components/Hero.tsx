@@ -13,9 +13,10 @@ import { downloadIcs } from '../lib/ics';
 
 interface HeroProps {
   events: CampusEvent[];
+  onShowOnMap: (placeId: string) => void;
 }
 
-export function Hero({ events }: HeroProps) {
+export function Hero({ events, onShowOnMap }: HeroProps) {
   const now = useNow(1000);
   const next = events.find((e) => e.end.getTime() > now.getTime());
   const happening = next ? next.start.getTime() <= now.getTime() : false;
@@ -91,7 +92,20 @@ export function Hero({ events }: HeroProps) {
               <div className="flex items-center gap-2">
                 <dt className="sr-only">Onde</dt>
                 <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <dd>{next.location}</dd>
+                <dd>
+                  {next.placeId ? (
+                    <button
+                      type="button"
+                      onClick={() => onShowOnMap(next.placeId!)}
+                      className="text-left font-semibold text-white underline decoration-white/40 underline-offset-2 hover:decoration-white"
+                      aria-label={`${next.location}: ver no mapa`}
+                    >
+                      {next.location}
+                    </button>
+                  ) : (
+                    next.location
+                  )}
+                </dd>
               </div>
             </dl>
 

@@ -53,3 +53,44 @@ body {
 .tabular {
   font-variant-numeric: tabular-nums;
 }
+
+/* ---------- Mapa (Leaflet) ---------- */
+.leaflet-container {
+  font-family: inherit;
+  background: #e5e7eb;
+}
+.sc-pin {
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--pin);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+}
+.sc-pin::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 9999px;
+  background: #fff;
+}
+.sc-pin-selected {
+  transform: rotate(-45deg) scale(1.25);
+  outline: 3px solid rgb(31 111 191 / 0.45);
+}
+.sc-me {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #1f6fbf;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 6px rgb(31 111 191 / 0.25);
+}
+.leaflet-popup-content {
+  margin: 12px 14px;
+  font-size: 13px;
+  line-height: 1.4;
+}
