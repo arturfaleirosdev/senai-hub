@@ -4,7 +4,9 @@
  * Variáveis de ambiente (Supabase → Edge Functions → Secrets):
  *   GEMINI_API_KEY      (obrigatória) chave gratuita do Google AI Studio
  *   GEMINI_MODEL        (opcional) modelos da família Flash, separados por vírgula,
- *                       testados em ordem. Padrão: gemini-flash-latest,gemini-2.5-flash
+ *                       testados em ordem. Padrão: gemini-3.5-flash,gemini-flash-latest.
+ *                       Se nenhum existir, a função consulta a lista de modelos da chave
+ *                       e usa o Flash mais recente disponível.
  *   LIMITE_DIARIO       (opcional) mensagens por aparelho por dia. Padrão: 20
  *   LIMITE_GLOBAL       (opcional) mensagens de todos os alunos por dia. Padrão: 300
  *   ORIGENS_PERMITIDAS  (opcional) sites que podem chamar a função, separados por vírgula
@@ -25,7 +27,7 @@ const ORIGENS = (
   .map((o) => o.trim())
   .filter(Boolean);
 
-const MODELOS = (env('GEMINI_MODEL') || 'gemini-flash-latest,gemini-2.5-flash')
+const MODELOS = (env('GEMINI_MODEL') || 'gemini-3.5-flash,gemini-flash-latest')
   .split(',')
   .map((m) => m.trim())
   .filter((m) => /^[\w.-]+$/.test(m));
@@ -78,9 +80,49 @@ type Gemini =
   | { ok: true; texto: string }
   | { ok: false; erro: 'cota' | 'config' | 'bloqueado' | 'falha'; detalhe: string };
 
+let modelosDescobertos: string[] | null = null;
+
+/** Lista os modelos Flash disponíveis para a chave (os nomes mudam com o tempo). */
+async function descobrirModelosFlash(chave: string): Promise<string[]> {
+  if (modelosDescobertos) return modelosDescobertos;
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', {
+      headers: { 'x-goog-api-key': chave },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const nomes: string[] = (data?.models ?? [])
+      .filter((m: { supportedGenerationMethods?: string[] }) => (m.supportedGenerationMethods ?? []).includes('generateContent'))
+      .map((m: { name?: string }) => String(m.name ?? '').replace(/^models\//, ''))
+      .filter((n: string) => /flash/i.test(n) && !/(lite|image|tts|audio|live|8b)/i.test(n));
+    const estaveis = nomes.filter((n) => !/(preview|exp)/i.test(n));
+    const escolha = (estaveis.length ? estaveis : nomes).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+    modelosDescobertos = escolha.slice(0, 3);
+    console.log('modelos Flash disponíveis:', modelosDescobertos.join(', '));
+    return modelosDescobertos;
+  } catch {
+    return [];
+  }
+}
+
 async function perguntarGemini(sistema: string, mensagens: { role: 'user' | 'model'; text: string }[]): Promise<Gemini> {
   const chave = env('GEMINI_API_KEY');
   if (!chave) return { ok: false, erro: 'config', detalhe: 'GEMINI_API_KEY ausente' };
+  const primeira = await tentarModelos(chave, sistema, mensagens, MODELOS);
+  if (primeira.ok || !primeira.todos404) return primeira.resultado;
+  const descobertos = (await descobrirModelosFlash(chave)).filter((m) => !MODELOS.includes(m));
+  if (!descobertos.length) return primeira.resultado;
+  return (await tentarModelos(chave, sistema, mensagens, descobertos)).resultado;
+}
+
+async function tentarModelos(
+  chave: string,
+  sistema: string,
+  mensagens: { role: 'user' | 'model'; text: string }[],
+  modelos: string[],
+): Promise<{ ok: boolean; todos404: boolean; resultado: Gemini }> {
+  let todos404 = modelos.length > 0;
+  const fim = (resultado: Gemini) => ({ ok: resultado.ok, todos404: false, resultado });
 
   const corpo = JSON.stringify({
     systemInstruction: { parts: [{ text: sistema }] },
@@ -89,7 +131,7 @@ async function perguntarGemini(sistema: string, mensagens: { role: 'user' | 'mod
   });
 
   let ultimo = 'nenhum modelo configurado';
-  for (const modelo of MODELOS) {
+  for (const modelo of modelos) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 25_000);
     try {
@@ -104,17 +146,18 @@ async function perguntarGemini(sistema: string, mensagens: { role: 'user' | 'mod
         ultimo = `${modelo}: 404`;
         continue; // modelo indisponível: tenta o próximo da lista
       }
-      if (res.status === 429) return { ok: false, erro: 'cota', detalhe: `${modelo}: 429` };
+      todos404 = false;
+      if (res.status === 429) return fim({ ok: false, erro: 'cota', detalhe: `${modelo}: 429` });
       if (res.status === 400 && /API_KEY_INVALID|API key not valid/i.test(texto)) {
-        return { ok: false, erro: 'config', detalhe: 'chave do Gemini inválida' };
+        return fim({ ok: false, erro: 'config', detalhe: 'chave do Gemini inválida' });
       }
-      if (res.status === 401 || res.status === 403) return { ok: false, erro: 'config', detalhe: `${modelo}: ${res.status}` };
+      if (res.status === 401 || res.status === 403) return fim({ ok: false, erro: 'config', detalhe: `${modelo}: ${res.status}` });
       if (!res.ok) {
         ultimo = `${modelo}: ${res.status} ${texto.slice(0, 300)}`;
         continue;
       }
       const data = JSON.parse(texto);
-      if (data?.promptFeedback?.blockReason) return { ok: false, erro: 'bloqueado', detalhe: data.promptFeedback.blockReason };
+      if (data?.promptFeedback?.blockReason) return fim({ ok: false, erro: 'bloqueado', detalhe: data.promptFeedback.blockReason });
       const cand = data?.candidates?.[0];
       const resposta = (cand?.content?.parts ?? [])
         .filter((p: { thought?: boolean }) => !p.thought)
@@ -122,18 +165,19 @@ async function perguntarGemini(sistema: string, mensagens: { role: 'user' | 'mod
         .join('')
         .trim();
       if (!resposta) {
-        if (cand?.finishReason === 'SAFETY') return { ok: false, erro: 'bloqueado', detalhe: 'SAFETY' };
+        if (cand?.finishReason === 'SAFETY') return fim({ ok: false, erro: 'bloqueado', detalhe: 'SAFETY' });
         ultimo = `${modelo}: resposta vazia (${cand?.finishReason ?? '?'})`;
         continue;
       }
-      return { ok: true, texto: resposta };
+      return fim({ ok: true, texto: resposta });
     } catch (e) {
+      todos404 = false;
       ultimo = `${modelo}: ${e instanceof Error ? e.message : String(e)}`;
     } finally {
       clearTimeout(timer);
     }
   }
-  return { ok: false, erro: 'falha', detalhe: ultimo };
+  return { ok: false, todos404, resultado: { ok: false, erro: 'falha', detalhe: ultimo } };
 }
 
 Deno.serve(async (req) => {

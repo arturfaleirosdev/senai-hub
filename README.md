@@ -89,7 +89,7 @@ que roda no Supabase (plano gratuito) e fala com o Gemini.
 4. **Função:** com o [Supabase CLI](https://supabase.com/docs/guides/cli), rode
    `supabase functions deploy assistente --no-verify-jwt --project-ref SEU_PROJECT_REF`.
 5. **Segredo:** em **Edge Functions → Secrets**, crie `GEMINI_API_KEY` com a chave do passo 1.
-   Opcionais: `GEMINI_MODEL` (padrão `gemini-flash-latest,gemini-2.5-flash`), `LIMITE_DIARIO`
+   Opcionais: `GEMINI_MODEL` (padrão `gemini-3.5-flash,gemini-flash-latest`; se nenhum existir, a função escolhe sozinha o Flash mais recente da sua chave), `LIMITE_DIARIO`
    (padrão 20 mensagens por aparelho/dia), `LIMITE_GLOBAL` (padrão 300/dia) e `ORIGENS_PERMITIDAS`.
 6. **Site:** coloque o endereço `https://SEU_PROJECT_REF.supabase.co/functions/v1/assistente` em
    `src/config.ts` (ou na variável `VITE_ASSISTENTE_URL` do build) e publique de novo.
